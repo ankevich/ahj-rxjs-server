@@ -17,25 +17,14 @@ app.use(async (ctx, next) => {
 
 app.use(async (ctx) => {
   if (ctx.url === "/messages/unread" && ctx.method === "GET") {
+    
+    const count = faker.datatype.number({ min: 1, max: 3 });
+    const messages = Array.from({ length: count }, generateMessage);
+
     ctx.response.body = {
       status: "ok",
       timestamp: new Date().getTime(),
-      messages: [
-        {
-          id: faker.datatype.uuid(),
-          from: faker.internet.email(),
-          subject: faker.lorem.sentence(),
-          body: faker.lorem.paragraph(),
-          received: faker.date.past(),
-        },
-        {
-          id: faker.datatype.uuid(),
-          from: faker.internet.email(),
-          subject: faker.lorem.sentence(),
-          body: faker.lorem.paragraph(),
-          received: faker.date.past(),
-        },
-      ],
+      messages,
     };
   } else {
     ctx.response.status = 404;
@@ -43,3 +32,11 @@ app.use(async (ctx) => {
 });
 
 app.listen(3000);
+
+const generateMessage = () => ({
+  id: faker.datatype.uuid(),
+  from: faker.internet.email(),
+  subject: faker.lorem.sentence(),
+  body: faker.lorem.paragraph(),
+  received: faker.date.past(),
+});
